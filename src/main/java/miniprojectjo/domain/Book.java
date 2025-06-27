@@ -30,6 +30,8 @@ public class Book {
 
     private String authorName;
 
+    private Integer readCount = 0;
+
     public static BookRepository repository() {
         BookRepository bookRepository = PlatformApplication.applicationContext.getBean(
             BookRepository.class
@@ -37,70 +39,43 @@ public class Book {
         return bookRepository;
     }
 
-    //<<< Clean Arch / Port Method
     public static void grantBadge(SubscriptionApplied subscriptionApplied) {
-        //implement business logic here:
+    if (subscriptionApplied.getBookId() == null) return;
 
-        /** Example 1:  new item 
-        Book book = new Book();
-        repository().save(book);
+    Long bookId = Long.valueOf(subscriptionApplied.getBookId().toString());
 
-        BadgeGranted badgeGranted = new BadgeGranted(book);
-        badgeGranted.publishAfterCommit();
-        */
+    repository().findById(bookId).ifPresent(book -> {
+        int currentReadCount = book.getReadCount() != null ? book.getReadCount() : 0;
+        book.setReadCount(currentReadCount + 1);
 
-        /** Example 2:  finding and process
-        
-        // if subscriptionApplied.bookIduserId exists, use it
-        
-        // ObjectMapper mapper = new ObjectMapper();
-        // Map<Long, Object> subscriptionMap = mapper.convertValue(subscriptionApplied.getBookId(), Map.class);
-        // Map<Long, Object> subscriptionMap = mapper.convertValue(subscriptionApplied.getUserId(), Map.class);
-
-        repository().findById(subscriptionApplied.get???()).ifPresent(book->{
-            
-            book // do something
-            repository().save(book);
+        if (book.getReadCount() >= 3 && !Boolean.TRUE.equals(book.getIsBestSeller())) {
+            book.setIsBestSeller(true);
 
             BadgeGranted badgeGranted = new BadgeGranted(book);
+            badgeGranted.setSubscriptionCount(book.getReadCount()); // 실제로는 열람 수
             badgeGranted.publishAfterCommit();
+        }
 
-         });
-        */
-
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void registerBook(
-        SubscriptionFeeCalculated subscriptionFeeCalculated
-    ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Book book = new Book();
         repository().save(book);
+    });
+}
+public static void registerBook(SubscriptionFeeCalculated subscriptionFeeCalculated) {
+    if (subscriptionFeeCalculated.getManuscriptId() == null) return;
 
-        BookRegistered bookRegistered = new BookRegistered(book);
-        bookRegistered.publishAfterCommit();
-        */
+    Book book = new Book();
 
-        /** Example 2:  finding and process
-        
+    book.setBookName("신규 도서_" + subscriptionFeeCalculated.getManuscriptId());
+    book.setCategory("자동 등록");
+    book.setAuthorName("AI Writer");
+    book.setIsBestSeller(false); // 기본값
 
-        repository().findById(subscriptionFeeCalculated.get???()).ifPresent(book->{
-            
-            book // do something
-            repository().save(book);
+    repository().save(book);
 
-            BookRegistered bookRegistered = new BookRegistered(book);
-            bookRegistered.publishAfterCommit();
+    BookRegistered bookRegistered = new BookRegistered(book);
+    bookRegistered.setBookContent("기준: " + subscriptionFeeCalculated.getCriteria());
+    bookRegistered.publishAfterCommit();
+}
 
-         });
-        */
-
-    }
-    //>>> Clean Arch / Port Method
 
 }
 //>>> DDD / Aggregate Root
