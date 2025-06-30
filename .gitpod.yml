@@ -9,3 +9,4 @@ tasks:
     init: |
       chmod +x ./init.sh
       ./init.sh
+# gitpod 실행 시 init 파일 내용을 실행
