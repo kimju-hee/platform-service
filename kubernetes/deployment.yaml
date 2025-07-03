@@ -43,4 +43,3 @@ spec:
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 5
-            
