@@ -1,9 +1,9 @@
 server:
-  port: 8086
+  port: 8081
 
 spring:
   application:
-    name: aigeneration
+    name: platform-service
 
   profiles:
     active: default
@@ -19,7 +19,7 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: localhost:9092
+          brokers: kafka.default.svc.cluster.local:9092
         streams:
           binder:
             configuration:
@@ -30,7 +30,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: aigeneration
+          group: platform-service
           destination: miniprojectjo
           contentType: application/json
         event-out:
