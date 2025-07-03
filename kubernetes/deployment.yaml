@@ -13,24 +13,32 @@ spec:
     metadata:
       labels:
         app: platform
+        sidecar.istio.io/inject: "true"
     spec:
       containers:
         - name: platform
-          image: "username/platform:latest"
+          image: project20registry.azurecr.io/platform-service:v1
           ports:
-            - containerPort: 8080
+            - containerPort: 8086
+          env:
+            - name: SERVER_ADDRESS
+              value: "0.0.0.0"
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: kafka.default.svc.cluster.local:9092
           readinessProbe:
             httpGet:
               path: '/actuator/health'
-              port: 8080
-            initialDelaySeconds: 10
+              port: 8086
+            initialDelaySeconds: 30
             timeoutSeconds: 2
             periodSeconds: 5
             failureThreshold: 10
           livenessProbe:
             httpGet:
               path: '/actuator/health'
-              port: 8080
+              port: 8086
             initialDelaySeconds: 120
             timeoutSeconds: 2
             periodSeconds: 5
