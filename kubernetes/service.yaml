@@ -5,7 +5,7 @@ metadata:
   labels:
     app: platform
 spec:
-  type: ClusterIp
+  type: LoadBalancer
   ports:
     - port: 8086
       targetPort: 8086
