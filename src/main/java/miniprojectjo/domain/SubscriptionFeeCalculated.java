@@ -2,7 +2,6 @@ package miniprojectjo.domain;
 
 import java.util.*;
 import lombok.*;
-import miniprojectjo.domain.*;
 import miniprojectjo.infra.AbstractEvent;
 
 @Data
@@ -14,4 +13,11 @@ public class SubscriptionFeeCalculated extends AbstractEvent {
     private Integer subscriptionFee;
     private String criteria;
     private Date calculatedAt;
+    private String content;
+    private String summary;
+    private String coverImageUrl;
+    private String bookName;
+    private String category;
+    private String authorName;
+    
 }
