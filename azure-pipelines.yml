@@ -1,0 +1,38 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  imageName: 'platform-service'
+  imageTag: 'v1'
+
+steps:
+  - checkout: self
+
+  - script: |
+      chmod +x ./gradlew
+      ./gradlew clean build
+    displayName: 'Build with Gradle Wrapper'
+
+  - task: Docker@2
+    inputs:
+      containerRegistry: 'project20registry'
+      repository: '$(imageName)'
+      command: 'buildAndPush'
+      Dockerfile: 'Dockerfile'
+      tags: |
+        $(imageTag)
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'project20-rsrcgrp-connection'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az aks get-credentials --resource-group project20-rsrcgrp --name project20-aks --overwrite-existing
+        kubectl apply -f kubernetes/deployment.yaml
+        kubectl apply -f kubernetes/service.yaml
