@@ -1,9 +1,9 @@
 server:
-  port: 8081
+  port: 8086
 
 spring:
   application:
-    name: platform-service
+    name: platform
 
   profiles:
     active: default
@@ -19,7 +19,7 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: kafka.default.svc.cluster.local:9092
+          brokers: localhost:9092
         streams:
           binder:
             configuration:
@@ -30,7 +30,7 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
       bindings:
         event-in:
-          group: platform-service
+          group: platform
           destination: miniprojectjo
           contentType: application/json
         event-out:
@@ -46,3 +46,13 @@ logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
+    org.springframework.core.env: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
